@@ -1,0 +1,31 @@
+.collaborators {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: rgba(0, 230, 230, 0.05);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 230, 230, 0.1);
+}
+
+.collaborators p {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.collaborators strong {
+    color: #00e6e6;
+}
+
+.collaborators p:first-child strong {
+    color: #00e6e6;
+    font-size: 1.2rem;
+}
+
+.footer p {
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .collaborators p {
+        font-size: 0.9rem;
+    }
+}
