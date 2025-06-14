@@ -64,24 +64,6 @@
         .pdf-toolbar button i {
             font-size: 1.1rem;
         }
-        .pdf-frame-container {
-            flex-grow: 1;
-            width: 100%;
-            position: relative;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            touch-action: auto;
-        }
-        .pdf-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
         .pdf-title {
             color: #00e6e6;
             font-size: 1.2rem;
@@ -139,34 +121,126 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Estilos específicos para o PDF em dispositivos móveis */
-        .pdf-mobile-container {
+        /* PDF.js Viewer Styles */
+        #pdfContainer {
+            flex-grow: 1;
             width: 100%;
             height: 100%;
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: auto;
             position: relative;
+            background-color: #333;
         }
-
-        .pdf-mobile-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Estilos para o PDF nativo em dispositivos móveis */
-        .pdf-object-container {
+        
+        #pdfViewer {
+            position: absolute;
             width: 100%;
             height: 100%;
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: auto;
         }
-
-        .pdf-object {
-            width: 100%;
-            height: 100%;
+        
+        .page-container {
+            margin: 10px auto;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .page-canvas {
+            display: block;
+            margin: 0 auto;
+            border: none;
+        }
+        
+        /* Controles de navegação de página */
+        .page-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background-color: rgba(26, 26, 26, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        
+        .page-controls button {
+            background: linear-gradient(135deg, #00e6e6, #a020f0);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+        }
+        
+        .page-controls span {
+            color: white;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Controles de zoom */
+        .zoom-controls {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: rgba(26, 26, 26, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        
+        .zoom-controls button {
+            background: linear-gradient(135deg, #00e6e6, #a020f0);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .page-controls {
+                bottom: 10px;
+            }
+            
+            .page-controls button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                min-width: 30px;
+            }
+            
+            .zoom-controls {
+                top: 120px;
+                right: 10px;
+            }
+            
+            .zoom-controls button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -184,24 +258,56 @@
                 <button onclick="window.location.href='index.html'"><i class="fas fa-times"></i> Fechar</button>
             </div>
         </div>
-        <div class="pdf-frame-container" id="pdfContainer">
+        
+        <div id="pdfContainer">
             <div id="loaderContainer" class="loader-container">
                 <div class="loader"></div>
             </div>
-            <!-- O conteúdo do PDF será inserido aqui dinamicamente -->
+            <div id="pdfViewer"></div>
+            
+            <div class="page-controls">
+                <button id="prevPage" title="Página anterior"><i class="fas fa-chevron-left"></i></button>
+                <span id="pageInfo">0 / 0</span>
+                <button id="nextPage" title="Próxima página"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            
+            <div class="zoom-controls">
+                <button id="zoomIn" title="Aumentar zoom"><i class="fas fa-plus"></i></button>
+                <button id="zoomOut" title="Diminuir zoom"><i class="fas fa-minus"></i></button>
+                <button id="zoomReset" title="Resetar zoom"><i class="fas fa-sync-alt"></i></button>
+            </div>
         </div>
     </div>
 
+    <script src="js/pdfjs/pdf.min.js"></script>
     <script>
+        // Configurar o worker do PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'js/pdfjs/pdf.worker.min.js';
+        
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const pdfPath = urlParams.get('pdf');
-            const pdfContainer = document.getElementById('pdfContainer');
+            const pdfViewer = document.getElementById('pdfViewer');
             const downloadPdfBtn = document.getElementById('downloadPdfBtn');
             const prevPdfBtn = document.getElementById('prevPdfBtn');
             const nextPdfBtn = document.getElementById('nextPdfBtn');
             const pdfTitle = document.getElementById('pdfTitle');
             const loaderContainer = document.getElementById('loaderContainer');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            const zoomInBtn = document.getElementById('zoomIn');
+            const zoomOutBtn = document.getElementById('zoomOut');
+            const zoomResetBtn = document.getElementById('zoomReset');
+            
+            // Variáveis para controle do PDF
+            let pdfDoc = null;
+            let currentPage = 1;
+            let totalPages = 0;
+            let currentScale = 1.0;
+            const MIN_SCALE = 0.5;
+            const MAX_SCALE = 3.0;
+            const SCALE_STEP = 0.2;
             
             // Lista de PDFs disponíveis
             const pdfList = [
@@ -238,85 +344,221 @@
                 return nameMap[fileName] || fileName;
             }
             
-            // Detectar se é um dispositivo móvel
-            function isMobileDevice() {
-                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            }
-
-            // Detectar se é iOS
-            function isIOS() {
-                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // Função para renderizar uma página do PDF
+            async function renderPage(pageNum) {
+                if (!pdfDoc) return;
+                
+                // Limitar o número da página
+                if (pageNum < 1) pageNum = 1;
+                if (pageNum > totalPages) pageNum = totalPages;
+                
+                currentPage = pageNum;
+                
+                try {
+                    // Obter a página do PDF
+                    const page = await pdfDoc.getPage(pageNum);
+                    
+                    // Calcular a escala para ajustar à largura da tela
+                    const viewport = page.getViewport({ scale: currentScale });
+                    
+                    // Verificar se já existe um container para esta página
+                    let pageContainer = document.getElementById(`page-${pageNum}`);
+                    let canvas;
+                    
+                    if (!pageContainer) {
+                        // Criar um novo container e canvas para a página
+                        pageContainer = document.createElement('div');
+                        pageContainer.id = `page-${pageNum}`;
+                        pageContainer.className = 'page-container';
+                        pageContainer.style.width = `${viewport.width}px`;
+                        pageContainer.style.height = `${viewport.height}px`;
+                        
+                        canvas = document.createElement('canvas');
+                        canvas.className = 'page-canvas';
+                        pageContainer.appendChild(canvas);
+                        
+                        // Limpar o visualizador e adicionar o novo container
+                        pdfViewer.innerHTML = '';
+                        pdfViewer.appendChild(pageContainer);
+                    } else {
+                        // Usar o canvas existente
+                        canvas = pageContainer.querySelector('canvas');
+                        
+                        // Atualizar as dimensões do container
+                        pageContainer.style.width = `${viewport.width}px`;
+                        pageContainer.style.height = `${viewport.height}px`;
+                    }
+                    
+                    // Configurar o canvas para renderização
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    // Renderizar a página no canvas
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    await page.render(renderContext).promise;
+                    
+                    // Atualizar a informação da página
+                    pageInfo.textContent = `${currentPage} / ${totalPages}`;
+                    
+                    // Atualizar estado dos botões de navegação
+                    prevPageBtn.disabled = currentPage <= 1;
+                    nextPageBtn.disabled = currentPage >= totalPages;
+                    
+                    // Rolar para o topo da página
+                    pdfViewer.scrollTop = 0;
+                    
+                } catch (error) {
+                    console.error('Erro ao renderizar página:', error);
+                }
             }
             
-            if (pdfPath) {
-                // Mostrar loader enquanto carrega
-                loaderContainer.style.display = 'flex';
+            // Função para carregar o PDF
+            async function loadPDF(url) {
+                try {
+                    // Mostrar loader
+                    loaderContainer.style.display = 'flex';
+                    
+                    // Carregar o documento PDF
+                    pdfDoc = await pdfjsLib.getDocument(url).promise;
+                    totalPages = pdfDoc.numPages;
+                    
+                    // Renderizar a primeira página
+                    await renderPage(1);
+                    
+                    // Esconder o loader
+                    loaderContainer.style.display = 'none';
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar PDF:', error);
+                    loaderContainer.style.display = 'none';
+                    alert('Erro ao carregar o PDF. Por favor, tente novamente.');
+                }
+            }
+            
+            // Função para alterar o zoom
+            function changeZoom(delta) {
+                let newScale = currentScale + delta;
                 
+                // Limitar a escala
+                if (newScale < MIN_SCALE) newScale = MIN_SCALE;
+                if (newScale > MAX_SCALE) newScale = MAX_SCALE;
+                
+                currentScale = newScale;
+                
+                // Re-renderizar a página atual com a nova escala
+                renderPage(currentPage);
+            }
+            
+            // Configurar eventos de navegação de página
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    renderPage(currentPage - 1);
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    renderPage(currentPage + 1);
+                }
+            });
+            
+            // Configurar eventos de zoom
+            zoomInBtn.addEventListener('click', () => {
+                changeZoom(SCALE_STEP);
+            });
+            
+            zoomOutBtn.addEventListener('click', () => {
+                changeZoom(-SCALE_STEP);
+            });
+            
+            zoomResetBtn.addEventListener('click', () => {
+                currentScale = 1.0;
+                renderPage(currentPage);
+            });
+            
+            // Configurar eventos de toque para zoom e navegação
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            
+            pdfViewer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+            
+            pdfViewer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                
+                // Calcular a distância do swipe
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                
+                // Se o swipe horizontal for maior que o vertical e significativo
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Swipe para a esquerda - próxima página
+                        if (currentPage < totalPages) {
+                            renderPage(currentPage + 1);
+                        }
+                    } else {
+                        // Swipe para a direita - página anterior
+                        if (currentPage > 1) {
+                            renderPage(currentPage - 1);
+                        }
+                    }
+                }
+            }, { passive: true });
+            
+            // Configurar eventos de teclado para navegação
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    if (currentPage > 1) {
+                        renderPage(currentPage - 1);
+                    }
+                } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                    if (currentPage < totalPages) {
+                        renderPage(currentPage + 1);
+                    }
+                } else if (e.key === 'Home') {
+                    renderPage(1);
+                } else if (e.key === 'End') {
+                    renderPage(totalPages);
+                } else if (e.key === '+' || e.key === '=') {
+                    changeZoom(SCALE_STEP);
+                } else if (e.key === '-') {
+                    changeZoom(-SCALE_STEP);
+                } else if (e.key === '0') {
+                    currentScale = 1.0;
+                    renderPage(currentPage);
+                }
+            });
+            
+            // Configurar eventos de roda do mouse para zoom
+            pdfViewer.addEventListener('wheel', (e) => {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        changeZoom(SCALE_STEP);
+                    } else {
+                        changeZoom(-SCALE_STEP);
+                    }
+                }
+            }, { passive: false });
+            
+            // Iniciar o carregamento do PDF se o caminho estiver disponível
+            if (pdfPath) {
                 // Atualizar o título
                 pdfTitle.textContent = getPdfFriendlyName(pdfPath);
                 
-                // Limpar o container
-                while (pdfContainer.firstChild) {
-                    if (pdfContainer.firstChild === loaderContainer) {
-                        break;
-                    }
-                    pdfContainer.removeChild(pdfContainer.firstChild);
-                }
-
-                // Escolher o método de visualização apropriado
-                if (isMobileDevice()) {
-                    // Para dispositivos móveis, usamos uma abordagem diferente
-                    if (isIOS()) {
-                        // Para iOS, usamos um iframe com o PDF diretamente
-                        const mobileContainer = document.createElement('div');
-                        mobileContainer.className = 'pdf-mobile-container';
-                        
-                        const iframe = document.createElement('iframe');
-                        iframe.src = pdfPath;
-                        iframe.setAttribute('allowfullscreen', 'true');
-                        iframe.setAttribute('scrolling', 'yes');
-                        
-                        mobileContainer.appendChild(iframe);
-                        pdfContainer.appendChild(mobileContainer);
-                        
-                        // Esconder o loader quando o iframe estiver carregado
-                        iframe.onload = () => {
-                            loaderContainer.style.display = 'none';
-                        };
-                    } else {
-                        // Para Android, usamos o objeto PDF
-                        const objectContainer = document.createElement('div');
-                        objectContainer.className = 'pdf-object-container';
-                        
-                        const object = document.createElement('object');
-                        object.data = pdfPath;
-                        object.type = 'application/pdf';
-                        object.className = 'pdf-object';
-                        object.setAttribute('width', '100%');
-                        object.setAttribute('height', '100%');
-                        
-                        objectContainer.appendChild(object);
-                        pdfContainer.appendChild(objectContainer);
-                        
-                        // Esconder o loader após um tempo
-                        setTimeout(() => {
-                            loaderContainer.style.display = 'none';
-                        }, 1500);
-                    }
-                } else {
-                    // Para desktop, usamos o iframe padrão
-                    const iframe = document.createElement('iframe');
-                    iframe.className = 'pdf-frame';
-                    iframe.src = pdfPath;
-                    iframe.setAttribute('allowfullscreen', 'true');
-                    
-                    pdfContainer.appendChild(iframe);
-                    
-                    // Esconder o loader quando o iframe estiver carregado
-                    iframe.onload = () => {
-                        loaderContainer.style.display = 'none';
-                    };
-                }
+                // Carregar o PDF
+                loadPDF(pdfPath);
                 
                 // Configurar o botão de download
                 downloadPdfBtn.onclick = () => {
@@ -367,6 +609,36 @@
                     window.location.href = 'index.html';
                 }, 1000);
             }
+            
+            // Adicionar suporte a gestos de pinça para zoom em dispositivos móveis
+            let initialPinchDistance = 0;
+            
+            function calculateDistance(touches) {
+                return Math.hypot(
+                    touches[0].pageX - touches[1].pageX,
+                    touches[0].pageY - touches[1].pageY
+                );
+            }
+            
+            pdfViewer.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    initialPinchDistance = calculateDistance(e.touches);
+                }
+            }, { passive: true });
+            
+            pdfViewer.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2) {
+                    const currentDistance = calculateDistance(e.touches);
+                    const pinchDelta = currentDistance - initialPinchDistance;
+                    
+                    if (Math.abs(pinchDelta) > 10) {
+                        // Ajustar a sensibilidade do zoom
+                        const zoomDelta = pinchDelta > 0 ? SCALE_STEP : -SCALE_STEP;
+                        changeZoom(zoomDelta);
+                        initialPinchDistance = currentDistance;
+                    }
+                }
+            }, { passive: true });
         });
     </script>
 </body>
