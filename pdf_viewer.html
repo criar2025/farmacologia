@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Visualizador de PDF</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            overflow: hidden;
+        }
+        .pdf-viewer-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        .pdf-toolbar {
+            background-color: #1a1a1a;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.2);
+            flex-wrap: wrap;
+            gap: 10px;
+            z-index: 10;
+        }
+        .pdf-toolbar-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .pdf-toolbar button {
+            background: linear-gradient(135deg, #00e6e6, #a020f0);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pdf-toolbar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 230, 230, 0.3);
+            background: linear-gradient(135deg, #a020f0, #00e6e6);
+        }
+        .pdf-toolbar button i {
+            font-size: 1.1rem;
+        }
+        .pdf-frame-container {
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: auto;
+        }
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .pdf-title {
+            color: #00e6e6;
+            font-size: 1.2rem;
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 0 0 5px rgba(0, 230, 230, 0.3);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .pdf-toolbar {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .pdf-toolbar-group {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 5px;
+            }
+            .pdf-title {
+                order: -1;
+                margin-bottom: 10px;
+                font-size: 1rem;
+            }
+            .pdf-toolbar button {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Loader */
+        .loader-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(10, 10, 10, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+        .loader {
+            border: 5px solid rgba(0, 230, 230, 0.2);
+            border-radius: 50%;
+            border-top: 5px solid #00e6e6;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Estilos específicos para o PDF em dispositivos móveis */
+        .pdf-mobile-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: auto;
+            position: relative;
+        }
+
+        .pdf-mobile-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Estilos para o PDF nativo em dispositivos móveis */
+        .pdf-object-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: auto;
+        }
+
+        .pdf-object {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-viewer-container">
+        <div class="pdf-toolbar">
+            <div class="pdf-toolbar-group">
+                <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Início</button>
+                <button id="prevPdfBtn" title="PDF anterior"><i class="fas fa-chevron-left"></i> Anterior</button>
+                <button id="nextPdfBtn" title="Próximo PDF"><i class="fas fa-chevron-right"></i> Próximo</button>
+            </div>
+            <h1 class="pdf-title" id="pdfTitle">Visualizador de PDF</h1>
+            <div class="pdf-toolbar-group">
+                <button id="downloadPdfBtn"><i class="fas fa-download"></i> Download</button>
+                <button onclick="window.location.href='index.html'"><i class="fas fa-times"></i> Fechar</button>
+            </div>
+        </div>
+        <div class="pdf-frame-container" id="pdfContainer">
+            <div id="loaderContainer" class="loader-container">
+                <div class="loader"></div>
+            </div>
+            <!-- O conteúdo do PDF será inserido aqui dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pdfPath = urlParams.get('pdf');
+            const pdfContainer = document.getElementById('pdfContainer');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            const prevPdfBtn = document.getElementById('prevPdfBtn');
+            const nextPdfBtn = document.getElementById('nextPdfBtn');
+            const pdfTitle = document.getElementById('pdfTitle');
+            const loaderContainer = document.getElementById('loaderContainer');
+            
+            // Lista de PDFs disponíveis
+            const pdfList = [
+                'pdfs/CistoseTumoresOdontogênicos.pdf',
+                'pdfs/MetodologiadoExameClínicoe.pdf',
+                'pdfs/DoençasInfecciosas(Bacterianas,.pdf',
+                'pdfs/AnormalidadesDentárias.pdf',
+                'pdfs/Introduçãoaoestudodapatologiaoral.pdf',
+                'pdfs/Defeitosdodesenvolvimentoda.pdf',
+                'pdfs/doençapulpar.pdf',
+                'pdfs/biopsia_tecnicas.pdf',
+                'pdfs/introducao_patologia_oral.pdf',
+                'pdfs/lesoes_fundamentais.pdf'
+            ];
+            
+            // Função para obter o nome amigável do PDF
+            function getPdfFriendlyName(path) {
+                const fileName = path.split('/').pop().replace('.pdf', '');
+                
+                // Mapeamento de nomes de arquivo para nomes amigáveis
+                const nameMap = {
+                    'CistoseTumoresOdontogênicos': 'Cistos e Tumores Odontogênicos',
+                    'MetodologiadoExameClínicoe': 'Metodologia do Exame Clínico',
+                    'DoençasInfecciosas(Bacterianas,': 'Doenças Infecciosas',
+                    'AnormalidadesDentárias': 'Anormalidades Dentárias',
+                    'Introduçãoaoestudodapatologiaoral': 'Introdução à Patologia Oral',
+                    'Defeitosdodesenvolvimentoda': 'Defeitos do Desenvolvimento',
+                    'doençapulpar': 'Doença Pulpar',
+                    'biopsia_tecnicas': 'Técnicas de Biópsia',
+                    'introducao_patologia_oral': 'Introdução à Patologia Oral',
+                    'lesoes_fundamentais': 'Lesões Fundamentais'
+                };
+                
+                return nameMap[fileName] || fileName;
+            }
+            
+            // Detectar se é um dispositivo móvel
+            function isMobileDevice() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            // Detectar se é iOS
+            function isIOS() {
+                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            }
+            
+            if (pdfPath) {
+                // Mostrar loader enquanto carrega
+                loaderContainer.style.display = 'flex';
+                
+                // Atualizar o título
+                pdfTitle.textContent = getPdfFriendlyName(pdfPath);
+                
+                // Limpar o container
+                while (pdfContainer.firstChild) {
+                    if (pdfContainer.firstChild === loaderContainer) {
+                        break;
+                    }
+                    pdfContainer.removeChild(pdfContainer.firstChild);
+                }
+
+                // Escolher o método de visualização apropriado
+                if (isMobileDevice()) {
+                    // Para dispositivos móveis, usamos uma abordagem diferente
+                    if (isIOS()) {
+                        // Para iOS, usamos um iframe com o PDF diretamente
+                        const mobileContainer = document.createElement('div');
+                        mobileContainer.className = 'pdf-mobile-container';
+                        
+                        const iframe = document.createElement('iframe');
+                        iframe.src = pdfPath;
+                        iframe.setAttribute('allowfullscreen', 'true');
+                        iframe.setAttribute('scrolling', 'yes');
+                        
+                        mobileContainer.appendChild(iframe);
+                        pdfContainer.appendChild(mobileContainer);
+                        
+                        // Esconder o loader quando o iframe estiver carregado
+                        iframe.onload = () => {
+                            loaderContainer.style.display = 'none';
+                        };
+                    } else {
+                        // Para Android, usamos o objeto PDF
+                        const objectContainer = document.createElement('div');
+                        objectContainer.className = 'pdf-object-container';
+                        
+                        const object = document.createElement('object');
+                        object.data = pdfPath;
+                        object.type = 'application/pdf';
+                        object.className = 'pdf-object';
+                        object.setAttribute('width', '100%');
+                        object.setAttribute('height', '100%');
+                        
+                        objectContainer.appendChild(object);
+                        pdfContainer.appendChild(objectContainer);
+                        
+                        // Esconder o loader após um tempo
+                        setTimeout(() => {
+                            loaderContainer.style.display = 'none';
+                        }, 1500);
+                    }
+                } else {
+                    // Para desktop, usamos o iframe padrão
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'pdf-frame';
+                    iframe.src = pdfPath;
+                    iframe.setAttribute('allowfullscreen', 'true');
+                    
+                    pdfContainer.appendChild(iframe);
+                    
+                    // Esconder o loader quando o iframe estiver carregado
+                    iframe.onload = () => {
+                        loaderContainer.style.display = 'none';
+                    };
+                }
+                
+                // Configurar o botão de download
+                downloadPdfBtn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = pdfPath;
+                    link.download = pdfPath.split('/').pop();
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+                
+                // Encontrar o índice do PDF atual na lista
+                const currentIndex = pdfList.findIndex(path => pdfPath.includes(path.split('/').pop()));
+                
+                // Configurar navegação entre PDFs
+                if (currentIndex !== -1) {
+                    // Botão anterior
+                    if (currentIndex > 0) {
+                        prevPdfBtn.onclick = () => {
+                            window.location.href = `pdf_viewer.html?pdf=${pdfList[currentIndex - 1]}`;
+                        };
+                    } else {
+                        prevPdfBtn.disabled = true;
+                        prevPdfBtn.style.opacity = '0.5';
+                    }
+                    
+                    // Botão próximo
+                    if (currentIndex < pdfList.length - 1) {
+                        nextPdfBtn.onclick = () => {
+                            window.location.href = `pdf_viewer.html?pdf=${pdfList[currentIndex + 1]}`;
+                        };
+                    } else {
+                        nextPdfBtn.disabled = true;
+                        nextPdfBtn.style.opacity = '0.5';
+                    }
+                } else {
+                    // Se o PDF não estiver na lista, desabilitar os botões de navegação
+                    prevPdfBtn.disabled = true;
+                    nextPdfBtn.disabled = true;
+                    prevPdfBtn.style.opacity = '0.5';
+                    nextPdfBtn.style.opacity = '0.5';
+                }
+            } else {
+                alert('Nenhum PDF especificado.');
+                
+                // Redirecionar para a página inicial após um breve atraso
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

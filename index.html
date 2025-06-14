@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DON_FBBR - Patologia Oral na Odontologia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95); /* Fundo escuro */
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 230, 230, 0.2); /* Borda ciano sutil */
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0891b2;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #00e6e6; /* Ciano futurista */
+            font-weight: 500;
+            transition: color 0.3s ease, background 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #a020f0; /* Roxo vibrante */
+            background: rgba(0, 230, 230, 0.1); /* Fundo ciano sutil */
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); /* Fundo escuro */
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 230, 230, 0.1) 0%, transparent 50%); /* Efeito de brilho ciano */
+            animation: pulse 5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-content h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #00e6e6; /* Ciano futurista */
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            text-shadow: 0 0 15px rgba(0, 230, 230, 0.6);
+        }
+
+        .hero-content .highlight {
+            background: linear-gradient(135deg, #00e6e6, #a020f0); /* Gradiente ciano para roxo */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.35rem;
+            color: #b0e0e6; /* Azul claro para contraste */
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            text-shadow: 0 0 5px rgba(176, 224, 230, 0.3);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00e6e6, #a020f0); /* Gradiente ciano para roxo */
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 230, 230, 0.3);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 230, 230, 0.4);
+            background: linear-gradient(135deg, #a020f0, #00e6e6); /* Inverte o gradiente no hover */
+        }
+
+        .btn-secondary {
+            border: 2px solid #00e6e6; /* Borda ciano */
+            color: #00e6e6; /* Texto ciano */
+            background: transparent;
+        }
+
+        .btn-secondary:hover {
+            background: #00e6e6; /* Fundo ciano */
+            color: #0a0a0a; /* Texto escuro */
+            box-shadow: 0 10px 25px rgba(0, 230, 230, 0.3);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Alinha o robô na parte inferior */
+            position: relative;
+            height: 100%; /* Garante que o contêiner ocupe a altura total */
+        }
+
+        .don-fbbr {
+            max-width: 50px; /* Tamanho ainda menor */
+            width: 100%;
+            height: auto;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 5px 10px rgba(0, 230, 230, 0.3)); /* Sombra mais sutil */
+            position: fixed; /* Posição fixa na tela */
+            bottom: 20px; /* Ajuste para posicionar mais acima */
+            right: 20px; /* Ajuste para posicionar mais à direita */
+            cursor: pointer; /* Indica que é clicável */
+            z-index: 1500; /* Garante que fique acima de outros elementos */
+            opacity: 0.8; /* Torna mais visível */
+            transition: opacity 0.3s ease;
+        }
+
+        .don-fbbr:hover {
+            opacity: 1; /* Aumenta a opacidade ao passar o mouse */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: #0a0a0a; /* Fundo escuro */
+        }
+
+        .features-header h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00e6e6; /* Ciano futurista */
+            margin-bottom: 1rem;
+        }
+
+        .features-header p {
+            font-size: 1.25rem;
+            color: #b0e0e6; /* Azul claro */
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #1a1a1a; /* Fundo do card mais escuro */
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 230, 230, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px rgba(0, 230, 230, 0.2);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00e6e6, #a020f0);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00e6e6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #b0e0e6;
+            line-height: 1.6;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 6rem 0;
+            background: #0a0a0a; /* Fundo escuro */
+        }
+
+        .section-header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00e6e6; /* Ciano futurista */
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.25rem;
+            color: #b0e0e6; /* Azul claro */
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .content-card {
+            background: #1a1a1a; /* Fundo do card mais escuro */
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 230, 230, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px rgba(0, 230, 230, 0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.2);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00e6e6;
+            margin-bottom: 1rem;
+        }
+
+        .card-content p {
+            color: #b0e0e6;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .btn-small {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Team Member Cards */
+        .team-member-card {
+            background: #1a1a1a;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 230, 230, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px rgba(0, 230, 230, 0.2);
+        }
+
+        .team-member-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .team-member-card h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #00e6e6;
+            margin: 1rem 1rem 0.5rem;
+        }
+
+        .team-member-card .role {
+            font-size: 0.875rem;
+            color: #a020f0;
+            margin: 0 1rem 0.5rem;
+            font-weight: 600;
+        }
+
+        .team-member-card p {
+            color: #b0e0e6;
+            padding: 0 1rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Questions Section */
+        .question-card {
+            background: #1a1a1a; /* Fundo do card mais escuro */
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 230, 230, 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between; /* Ajustado para space-between */
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .question-category {
+            background: rgba(0, 230, 230, 0.1); /* Fundo ciano sutil */
+            color: #00e6e6; /* Ciano futurista */
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .question-number {
+            color: #b0e0e6; /* Azul claro */
+            font-size: 0.875rem;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #00e6e6; /* Ciano futurista */
+            margin-bottom: 1rem;
+        }
+
+        .question-answer {
+            background: #0a0a0a; /* Fundo escuro */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            color: #b0e0e6; /* Azul claro */
+            line-height: 1.6;
+            border: 1px solid rgba(0, 230, 230, 0.1);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1a1a1a; /* Fundo do formulário mais escuro */
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 230, 230, 0.1);
+            border: 1px solid rgba(0, 230, 230, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #00e6e6; /* Ciano futurista */
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(0, 230, 230, 0.3);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: #0a0a0a; /* Fundo do input escuro */
+            color: #e0e0e0; /* Texto claro */
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a020f0; /* Roxo vibrante no foco */
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Chat Modal */
+        .chat-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8); /* Fundo mais escuro */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .chat-container {
+            background: #1a1a1a; /* Fundo do chat mais escuro */
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 230, 230, 0.25);
+            border: 1px solid rgba(0, 230, 230, 0.3);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #00e6e6; /* Ciano futurista */
+        }
+
+        .chat-header p {
+            font-size: 0.875rem;
+            color: #b0e0e6; /* Azul claro */
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #b0e0e6; /* Azul claro */
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-chat:hover {
+            background: rgba(0, 230, 230, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-welcome {
+            text-align: center;
+            color: #b0e0e6; /* Azul claro */
+            padding: 2rem;
+        }
+
+        .chat-welcome i {
+            font-size: 3rem;
+            color: #00e6e6; /* Ciano futurista */
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1rem;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #00e6e6, #a020f0); /* Gradiente ciano para roxo */
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.ai {
+            background: #0a0a0a; /* Fundo da mensagem AI escuro */
+            color: #e0e0e0; /* Texto claro */
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+            border: 1px solid rgba(0, 230, 230, 0.1);
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 230, 230, 0.2);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid rgba(0, 230, 230, 0.3);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: #0a0a0a; /* Fundo do input escuro */
+            color: #e0e0e0; /* Texto claro */
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #a020f0; /* Roxo vibrante no foco */
+        }
+
+        .send-message {
+            background: linear-gradient(135deg, #00e6e6, #a020f0); /* Gradiente ciano para roxo */
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 230, 230, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Text Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 0;
+            background: #1a1a1a; /* Fundo do rodapé mais escuro */
+            text-align: center;
+            color: #b0e0e6;
+            border-top: 1px solid rgba(0, 230, 230, 0.2);
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer .social-links a {
+            color: #00e6e6;
+            font-size: 1.5rem;
+            margin: 0 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer .social-links a:hover {
+            color: #a020f0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                position: absolute;
+                top: 100%;
+                left: 0;
+                padding: 1rem 0;
+                border-top: 1px solid rgba(0, 230, 230, 0.2);
+            }
+
+            .navbar .nav-menu.active {
+                display: flex;
+            }
+
+            .navbar .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-image {
+                order: -1; /* Move a imagem para cima no mobile */
+                margin-bottom: 2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .features-grid,
+            .content-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form {
+                padding: 2rem;
+            }
+
+            .chat-container {
+                height: 80vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">
+                Patologia Oral
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Início</a></li>
+                <li><a href="#specialties">Especialidades</a></li>
+                <li><a href="#summaries">Resumos</a></li>
+                <li><a href="#questions">Questões</a></li>
+                <li><a href="#team">Nossa Equipe</a></li>
+                <li><a href="#contact">Contato</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1><span class="highlight">Patologia Oral</span></h1>
+                <p>Explore o fascinante mundo da Patologia Oral com nossa plataforma de estudos avançada, equipada com inteligência artificial e recursos interativos para maximizar seu aprendizado.</p>
+                <div class="hero-buttons">
+                    <a href="#summaries" class="btn btn-primary">Começar a Estudar <i class="fas fa-arrow-right"></i></a>
+                    <a href="#contact" class="btn btn-secondary">Fale Conosco <i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="don_fbbr_robot_small.png" alt="DON_FBBR Robot" class="don-fbbr" id="donFbbrIcon">
+            </div>
+        </div>
+    </section>
+
+    <section id="specialties" class="content-section text-center">
+        <div class="container">
+            <div class="section-header">
+                <h1>Nossas Especialidades</h1>
+                <p>Aprofunde-se nas áreas cruciais da Patologia Oral com nossos conteúdos especializados.</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="images/especialidade_patologia_oral_v2.png" alt="Patologia Oral" class="card-image">
+                    <div class="card-content">
+                        <h3>Patologia Oral</h3>
+                        <p>Estudo aprofundado das doenças que afetam a cavidade oral e estruturas anexas.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/especialidade_diagnostico_diferencial_v2.png" alt="Diagnóstico Diferencial" class="card-image">
+                    <div class="card-content">
+                        <h3>Diagnóstico Diferencial</h3>
+                        <p>Habilidade de distinguir uma doença de outras com sintomas semelhantes.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/especialidade_neoplasias_orais_v2.png" alt="Neoplasias Orais" class="card-image">
+                    <div class="card-content">
+                        <h3>Neoplasias Orais</h3>
+                        <p>Análise de tumores benignos e malignos que podem surgir na boca.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="summaries" class="content-section text-center">
+        <div class="container">
+            <div class="section-header">
+                <h1>Resumos e Materiais</h1>
+                <p>Acesse resumos e materiais de estudo essenciais para aprofundar seu conhecimento.</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="images/resumo_cistos_tumores.png" alt="Cistos e Tumores Odontogênicos" class="card-image">
+                    <div class="card-content">
+                        <h3>Cistos e Tumores Odontogênicos</h3>
+                        <p>Estudo detalhado das lesões císticas e neoplásicas de origem odontogênica.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/CistoseTumoresOdontogênicos.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/CistoseTumoresOdontogênicos.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_metodologia_exame_clinico.png" alt="Metodologia do Exame Clínico" class="card-image">
+                    <div class="card-content">
+                        <h3>Metodologia do Exame Clínico</h3>
+                        <p>Guia prático para a realização de exames clínicos completos na Patologia Oral.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/MetodologiadoExameClínicoe.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/MetodologiadoExameClínicoe.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_doencas_infecciosas.png" alt="Doenças Infecciosas" class="card-image">
+                    <div class="card-content">
+                        <h3>Doenças Infecciosas (Bacterianas, Virais, Fúngicas)</h3>
+                        <p>Visão geral das principais infecções que afetam a cavidade oral.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/DoençasInfecciosas(Bacterianas,.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/DoençasInfecciosas(Bacterianas,.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_anormalidades_dentarias.png" alt="Anormalidades Dentárias" class="card-image">
+                    <div class="card-content">
+                        <h3>Anormalidades Dentárias</h3>
+                        <p>Estudo das variações e anomalias no desenvolvimento e estrutura dos dentes.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/AnormalidadesDentárias.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/AnormalidadesDentárias.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_introducao_patologia_oral.png" alt="Introdução ao Estudo da Patologia Oral" class="card-image">
+                    <div class="card-content">
+                        <h3>Introdução ao Estudo da Patologia Oral</h3>
+                        <p>Conceitos fundamentais e a importância da Patologia Oral na odontologia.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/Introduçãoaoestudodapatologiaoral.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/Introduçãoaoestudodapatologiaoral.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_defeitos_desenvolvimento.png" alt="Defeitos do Desenvolvimento" class="card-image">
+                    <div class="card-content">
+                        <h3>Defeitos do Desenvolvimento</h3>
+                        <p>Análise das anomalias congênitas e adquiridas que afetam a região oral.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/Defeitosdodesenvolvimentoda.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/Defeitosdodesenvolvimentoda.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="images/resumo_doenca_pulpar.png" alt="Doença Pulpar" class="card-image">
+                    <div class="card-content">
+                        <h3>Doença Pulpar</h3>
+                        <p>Estudo das patologias que afetam a polpa dentária e seus tratamentos.</p>
+                        <div class="card-actions">
+                            <a href="pdf_viewer.html?pdf=pdfs/doençapulpar.pdf" class="btn btn-primary btn-small">Visualizar <i class="fas fa-eye"></i></a>
+                            <a href="pdfs/doençapulpar.pdf" download class="btn btn-secondary btn-small">Download <i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="questions" class="content-section text-center questoes-section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Questões para Revisão</h1>
+                <p>Teste seus conhecimentos com questões desafiadoras sobre Patologia Oral.</p>
+            </div>
+            <div id="questoes-container">
+                <!-- O conteúdo das questões será carregado dinamicamente pelo JavaScript -->
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando questões...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="content-section text-center">
+        <div class="container">
+            <div class="section-header">
+                <h1>Nossa Equipe</h1>
+                <p>Conheça os profissionais que tornam este projeto possível.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member-card">
+                    <img src="images/Dani.jpg" alt="Daniella Carvalho Gomes de Cerqueira">
+                    <h3>Daniella Carvalho Gomes de Cerqueira</h3>
+                    <p class="role">Coordenação dos cursos de saúde FBBR</p>
+                    <p>Responsável pela coordenação e desenvolvimento dos cursos de saúde da instituição.</p>
+                </div>
+                <div class="team-member-card">
+                    <img src="images/felipe.jpg" alt="Dr. Felipe Jesus">
+                    <h3>Dr. Felipe Jesus</h3>
+                    <p class="role">Coordenador do curso de Odontologia e Colaborador</p>
+                    <p>A sua ideia "Vamos" foi o start. Gratidão sempre.</p>
+                </div>
+                <div class="team-member-card">
+                    <img src="images/paulo_ricardo_real.jpg" alt="Dr. Paulo Ricardo Carvalho dos Santos">
+                    <h3>Dr. Paulo Ricardo Carvalho dos Santos</h3>
+                    <p class="role">Professor de Patologia Oral-FBBR</p>
+                    <p>Especialista em Patologia Oral, responsável pelo desenvolvimento do conteúdo científico e coordenação acadêmica da disciplina.</p>
+                </div>
+                <div class="team-member-card">
+                    <img src="images/harrison.JPG" alt="Harrison R. Costa">
+                    <h3>Harrison R. Costa</h3>
+                    <p class="role">Desenvolvedor e Estudante da Instituição em Odontologia-FBBR</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="content-section text-center">
+        <div class="container">
+            <div class="section-header">
+                <h1>Entre em Contato</h1>
+                <p>Tem dúvidas ou sugestões? Envie-nos uma mensagem.</p>
+            </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" placeholder="Seu nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu.email@exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Assunto</label>
+                    <input type="text" id="subject" placeholder="Assunto da mensagem" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Mensagem</label>
+                    <textarea id="message" placeholder="Digite sua mensagem aqui..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="area">Área de Interesse</label>
+                    <select id="area" class="form-select">
+                        <option value="">Selecione uma área</option>
+                        <option value="patologia">Patologia Oral</option>
+                        <option value="diagnostico">Diagnóstico Diferencial</option>
+                        <option value="neoplasias">Neoplasias Orais</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Mensagem <i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Patologia Oral na Odontologia - FBBR. Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div>
+                    <h3>DON_FBBR - Assistente IA</h3>
+                    <p>Seu assistente para estudos em Patologia Oral</p>
+                </div>
+                <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Mensagens serão adicionadas aqui dinamicamente -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua pergunta...">
+                <button class="send-message" id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estilos para questões -->
+    <link rel="stylesheet" href="css/questoes.css">
+    
+    <!-- Scripts -->
+    <script src="js/don_fbbr_ai.js"></script>
+    <script type="module" src="js/questoes-app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Smooth Scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (navMenu.classList.contains('active')) {
+                            navMenu.classList.remove('active');
+                        }
+                    }
+                });
+            });
+            
+            // Form Submission
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
